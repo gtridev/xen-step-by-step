@@ -86,10 +86,10 @@ function create_bridge {
  read -p 'ip: ' addr
  read -p 'sub-netmask: ' nmsk
  read -p 'gateway: ' gway
- read -p  "dns-server: " $dsrv
+ read -p  "dns-server: " dsrv
  
  echo "------------------"
- echo "IP Addr:        $addr"
+ echo "IP Addr:        $addr" ; echo 
  echo "Subnet Mas:     $nemsk"
  echo "Default Route:  $gway"
  echo "DNS:            $dsrv"
