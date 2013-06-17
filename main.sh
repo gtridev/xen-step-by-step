@@ -67,6 +67,19 @@ function check_if_xen_installed {
     #should display "control_d"
 }
 
+function install_xapi {
+	#install XCP-XAPI
+	sudo apt-get install xcp-xapi
+	
+	#setup the default toolstack
+	sed -i 's/TOOLSTACK=/TOOLSTACK=xapi/' /etc/default/xen
+	
+	# Disable xend from starting at boot
+	sudo sed -i -e 's/xend_start$/#xend_start/' -e 's/xend_stop$/#xend_stop' /etc/init.d/xend
+}
+
+
+
 
 while true; do
     case $1 in
