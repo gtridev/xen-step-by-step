@@ -6,7 +6,7 @@ PRG="$(basename $0)"
 function Usage {
     echo -e "Usage: \tmy_gen [OPTIONS]"
     echo -e "\t-i   |--install xen-hypervisor"
-    echo -e "\t-csr | --creat Storrage repository"
+    echo -e "\t-csr | --create Storrage repository"
     echo -e "\t-h   | --help\tDisplay this message"
     exit
 }
@@ -72,14 +72,29 @@ function install_xapi {
 	sudo apt-get install xcp-xapi
 	
 	#setup the default toolstack
-	sed -i 's/TOOLSTACK=/TOOLSTACK=xapi/' /etc/default/xen
+ 	sudo sed -i 's/TOOLSTACK=/TOOLSTACK=xapi/' /etc/default/xen
 	
 	# Disable xend from starting at boot
 	sudo sed -i -e 's/xend_start$/#xend_start/' -e 's/xend_stop$/#xend_stop' /etc/init.d/xend
 }
 
-
-
+#ask user for ip_addr, netmask, gateway, dns-server
+function create_bridge {
+    
+ echo "please provide static values"
+ 
+ read -p 'ip: ' addr
+ read -p 'sub-netmask: ' nmsk
+ read -p 'gateway: ' gway
+ read -p  "dns-server: " $dsrv
+ 
+ echo "------------------"
+ echo "IP Addr:        $addr"
+ echo "Subnet Mas:     $nemsk"
+ echo "Default Route:  $gway"
+ echo "DNS:            $dsrv"
+ echo "------------------"
+}
 
 while true; do
     case $1 in
@@ -88,7 +103,7 @@ while true; do
 	-c|--chk) check_if_xen_installed;break;;
 	-x|--install_xapi) install_xapi; break;;
 	-n|--init) init; break;;
-	
+	-cb|--createbr) create_bridge; break;;
 	--) break;;
     esac 
 done
