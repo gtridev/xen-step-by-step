@@ -63,7 +63,8 @@ function xen_install {
 
 function check_if_xen_installed {
     #Once the server is back online ensure that Xen is running
-    cat /proc/xen/capabilities should display "control_d"
+    cat /proc/xen/capabilities 
+    #should display "control_d"
 }
 
 
