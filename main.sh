@@ -5,9 +5,12 @@ PRG="$(basename $0)"
 
 function Usage {
     echo -e "Usage: \tmy_gen [OPTIONS]"
-    echo -e "\t-i   |--install xen-hypervisor"
-    echo -e "\t-csr | --create Storrage repository"
-    echo -e "\t-h   | --help\tDisplay this message"
+    echo -e "\t	-i|--install) xen_install"     
+    echo -e "\t	-c|--chk) check_if_xen_installed"
+    echo -e "\t	-x|--install_xapi) install_xapi"
+    echo -e "\t	-n|--init) init"
+    echo -e "\t	-cb|--createbr) create_bridge"
+    echo -e "\t -h|--help) show this help menu" 
     exit
 }
 
@@ -18,12 +21,22 @@ if [ $# -eq 0 ]; then
 fi
 
 function init {
-#cat logo
-    cat ./logo
-    echo "Welcome to this xen step-by-step script...\
-	Its for Ubuntu Users only...sorry:(\
-	Plez go through https://help.ubuntu.xom/community/Xen "
-
+    cat logo
+    # cat ./logo
+    space=$(echo -e "\n\t\t\t\t")
+    
+    echo "$space Welcome Geek --to this xen step-by-step script. \
+ $space Its for Ubuntu Users only...sorry for that:( \
+ $space Plez go through https://help.ubuntu.xom/community/Xen if needed\
+ $space ............................................................... "
+    
+    #components we need to be installed
+    echo "$space During the whole installation process we will be installing: \
+ $space *xen-hypervisor \
+ $space *openssh-server \
+ $space *bridge-utils\
+ $space *xcp-xapi"
+    
     
     #first get some updates on your system
     sudo apt-get update
@@ -31,7 +44,7 @@ function init {
     #install ssh server first...
     #It isNot necessary that ssh server is pre-installed
     sudo apt-get install openssh-server
-    
+   
 }
 
 #init
@@ -64,39 +77,64 @@ function xen_install {
 function check_if_xen_installed {
     #Once the server is back online ensure that Xen is running
    if [ "$(cat /proc/xen/capabilities)" == "control_d" ]
-      echo "Bravo... Xen is Running"
+     then
+       echo "Bravo... Xen is Running"
    fi
    
     #should display "control_d"
 }
 
-function install_xapi {
+function xapi_install {
 	#install XCP-XAPI
 	sudo apt-get install xcp-xapi
 	
 	#setup the default toolstack
- 	sudo sed -i 's/TOOLSTACK=/TOOLSTACK=xapi/' /etc/default/xen
+ 	sudo sed -i 's/TOOLSTACK=.*/TOOLSTACK=xapi/' /etc/default/xen
 	
 	# Disable xend from starting at boot
-	sudo sed -i -e 's/xend_start$/#xend_start/' -e 's/xend_stop$/#xend_stop' /etc/init.d/xend
+	sudo sed -i -e 's/xend_start$/#xend_start/' -e 's/xend_stop$/#xend_stop/' /etc/init.d/xend
+
+	#disable service xendomains 
+	sudo update-rc.d xendomains disable
+
+	#Fix for "qemu" which emulates the console does not have the keymaps in the correct location 
+	sudo mkdir /usr/share/qemu; 
+	sudo ln -s /usr/share/qemu-linaro/keymaps /usr/share/qemu/keymaps
 }
 
+##Network configuration 
 #ask user for ip_addr, netmask, gateway, dns-server
 function create_bridge {
+ 
+    echo "installing the bridge-utils"
+    #fist install brige controller
+    sudo apt-get install bridge-utils
+
+    #create a bond called xenbr0
+
+    # Xen network interface for "dom0"
+    #auto xenbr0
+    #iface xenbr0 inet static
+
+    echo "please provide valid static values"
+    read -p "IP Address: [default: 192.168.2.123]" addr; if [ "${#addr}" -eq 0 ]; then  addr="192.168.2.123"; fi 
+    read -p 'Sub NetMask:[default: 255.255.254.0]' nmsk; if [ "${#nmsk}" -eq 0 ]; then nmsk='255.255.254.0' ; fi 
+    read -p 'Gateway:    [default: 192.168.2.1]' gway ;  if [ "${#gway}" -eq 0 ]; then gway='192.168.2.1'	 ; fi
+    read -p 'DNS Server: [default: 192.168.2.5]' dsrv ;  if [ "${#dsrv}" -eq 0 ]; then dsrv='192.168.2.5'	 ; fi
     
- echo "please provide static values"
- 
- read -p 'ip: ' addr
- read -p 'sub-netmask: ' nmsk
- read -p 'gateway: ' gway
- read -p  "dns-server: " dsrv
- 
- echo "------------------"
- echo "IP Addr:        $addr" ; echo 
- echo "Subnet Mas:     $nemsk"
- echo "Default Route:  $gway"
- echo "DNS:            $dsrv"
- echo "------------------"
+   echo -e "address $addr\nnetmask $nmsk\ngateway $gway\ndns-nameservers $dsrv" >>/etc/network/interfaces
+#     echo -e "address $addr\nnetmask $nmsk\ngateway $gway\ndns-nameservers $dsrv" >/tmp/file
+    
+    echo -e "\n\nSo the input provided is: "
+    echo "---------------------------"
+    cat /etc/network/interfaces
+#   cat /tmp/file
+    
+    #Configure xcp to use "bridge" networking instead of "openswitch" 
+    sudo sed -i 's/openswitch/bridge/'  /etc/xcp/network.conf
+    
+    #then restart network to check everythings works well...
+    sudo /etc/init.d/networking restart
 }
 
 while true; do
