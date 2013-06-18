@@ -7,7 +7,7 @@ Modify this script according to your case... :D
 ###how to use it
 for help
 `./main.sh -h`
-![demo](http://i.imgur.com/XcYLnth.png)
+![demo](http://i.imgur.com/rsMpzIz.png)
 
 ####steps to be followed:
 1. Fist update your ubuntu and install xen
