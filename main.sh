@@ -108,23 +108,24 @@ function create_bridge {
  
     echo "installing the bridge-utils"
     #fist install brige controller
+
    sudo apt-get install bridge-utils
 
     #create a bond called xenbr0
     # Xen network interface for "dom0"
 
     sudo sed -i 's/auto/#auto/' /etc/network/interfaces    
-    echo -e "auto xenbr0\niface xenbr0 inet static\n bridge_ports eth0" >> /etc/network/interfaces
+    sudo echo -e "auto xenbr0\niface xenbr0 inet static\n bridge_ports eth0" >> /etc/network/interfaces
     #bridge_ports eth0
     #iface eth0 inet manual
 
-    echo "please provide valid static values"
-    read -p "IP Address: [default: 192.168.2.123]" addr; if [ "${#addr}" -eq 0 ]; then  addr="192.168.2.123"; fi 
-    read -p 'Sub NetMask:[default: 255.255.254.0]' nmsk; if [ "${#nmsk}" -eq 0 ]; then nmsk='255.255.254.0' ; fi 
-    read -p 'Gateway:    [default: 192.168.2.1]' gway ;  if [ "${#gway}" -eq 0 ]; then gway='192.168.2.1'	 ; fi
-    read -p 'DNS Server: [default: 192.168.2.5]' dsrv ;  if [ "${#dsrv}" -eq 0 ]; then dsrv='192.168.2.5'	 ; fi
+    sudo echo "please provide valid static values"
+    read -p "IP Address: [default: 192.168.2.123]  " addr; if [ "${#addr}" -eq 0 ]; then  addr="192.168.2.123"; fi 
+    read -p 'Sub NetMask:[default: 255.255.254.0] ' nmsk; if [ "${#nmsk}" -eq 0 ]; then nmsk='255.255.254.0' ; fi 
+    read -p 'Gateway:    [default: 192.168.2.1] ' gway ;  if [ "${#gway}" -eq 0 ]; then gway='192.168.2.1'	 ; fi
+    read -p 'DNS Server: [default: 192.168.2.5] ' dsrv ;  if [ "${#dsrv}" -eq 0 ]; then dsrv='192.168.2.5'	 ; fi
     
-   echo -e "address $addr\nnetmask $nmsk\ngateway $gway\ndns-nameservers $dsrv" >>/etc/network/interfaces
+    sudo echo -e "address $addr\nnetmask $nmsk\ngateway $gway\ndns-nameservers $dsrv" >>/etc/network/interfaces
 #     echo -e "address $addr\nnetmask $nmsk\ngateway $gway\ndns-nameservers $dsrv" >/tmp/file
     
     echo -e "\n\nSo the input provided is: "
