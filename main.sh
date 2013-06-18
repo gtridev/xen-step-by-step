@@ -108,6 +108,7 @@ function create_bridge {
  
     echo "installing the bridge-utils"
     #fist install brige controller
+
    sudo apt-get install bridge-utils
 
     #create a bond called xenbr0
