@@ -111,8 +111,6 @@ function create_bridge {
    sudo apt-get install bridge-utils
 
     #create a bond called xenbr0
-
-
     # Xen network interface for "dom0"
 
     sudo sed -i 's/auto/#auto/' /etc/network/interfaces    
@@ -152,7 +150,3 @@ while true; do
 	--) break;;
     esac 
 done
-
-
-
-
