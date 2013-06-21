@@ -112,7 +112,7 @@ function create_bridge {
 
     sudo apt-get install bridge-utils
 
-    sudo mv /etc/network/interfaces /etc/network/interfaces.save.$(date '+%a-%h-%d-%Y')
+    sudo cp /etc/network/interfaces /etc/network/interfaces.save.$(date '+%a-%h-%d-%Y') -f
     #create a bond called xenbr0
     # Xen network interface for "dom0"
 
@@ -127,7 +127,7 @@ function create_bridge {
     read -p 'Gateway:    [default: 192.168.2.1] ' gway ;  if [ "${#gway}" -eq 0 ]; then gway='192.168.2.1'	 ; fi
     read -p 'DNS Server: [default: 192.168.2.5] ' dsrv ;  if [ "${#dsrv}" -eq 0 ]; then dsrv='192.168.2.5'	 ; fi
 
-    sudo echo -e "address $addr\nnetmask $nmsk\ngateway $gway\ndns-nameservers $dsrv" >>/etc/network/interfaces
+    sudo echo -e "address $addr\nnetmask $nmsk\ngateway $gway\ndns-nameservers $dsrv" >> /etc/network/interfaces
     #     echo -e "address $addr\nnetmask $nmsk\ngateway $gway\ndns-nameservers $dsrv" >/tmp/file
     sudo echo -e " bridge_ports eth0 \n iface eth0 inet manual" >> /etc/network/interfaces
     echo -e "\n\nSo the input provided is: "
