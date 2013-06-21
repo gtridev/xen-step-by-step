@@ -4,13 +4,13 @@ WD="$(dirname $0)"
 PRG="$(basename $0)"
 
 function Usage {
-    echo -e "Usage: \tmy_gen [OPTIONS]"
-    echo -e "\t	-i|--install) xen_install"
-    echo -e "\t	-c|--chk) check_if_xen_installed"
-    echo -e "\t	-x|--install_xapi) install_xapi"
-    echo -e "\t	-n|--init) init"
-    echo -e "\t	-cb|--createbr) create_bridge"
-    echo -e "\t -h|--help) show this help menu"
+    echo -e "Usage: ./main.sh [OPTIONS]"
+    echo -e "\t	-n |--init)         * 1st option for installation script"
+    echo -e "\t	-i |--install       * To install xen"
+    echo -e "\t	-c |--chk           * To Check If Xen is Installed & Running"
+    echo -e "\t	-x |--xapi_install  * To install Xapi"
+    echo -e "\t	-cb|--createbr      * To create Bridge"
+    echo -e "\t -h |--help          * Show this help menu"
     exit
 }
 
@@ -67,9 +67,11 @@ function xen_install {
 
     #Update Grub with the config changes we just made
     sudo update-grub
-    exit
+
 
     #Reboot the server so that Xen boots on the server
+    echo -e 'You need to reboot your system to boot with Xen\n Reboot Now ....';
+    #read -p 'Reboot Now... ?[Y/n]' c; if [ "$c" == 'Y' ]|| []; then sudo reboot; fi
     #sudo reboot
 }
 
@@ -167,7 +169,7 @@ while true; do
 	-h|--help) Usage; exit;;
 	-i|--install) xen_install; break;;
 	-c|--chk) check_if_xen_installed;break;;
-	-x|--install_xapi) install_xapi; break;;
+	-x|--xapi_install) xapi_install; break;;
 	-n|--init) init; break;;
 	-cb|--createbr) create_bridge; break;;
 	-vmi|--virtualmc_install) virtual_machine_install; break;;
